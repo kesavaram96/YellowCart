@@ -795,6 +795,7 @@ textarea:focus {
 .special-product-active .product-image {
 	position: relative;
 	padding: 0 10px;
+
 }
 .special-product-active .product_desc {
 	margin: 15px 15px 0;

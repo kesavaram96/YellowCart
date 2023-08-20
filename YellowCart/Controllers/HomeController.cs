@@ -1,21 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Policy;
+using YellowCart.Data;
 using YellowCart.Models;
+using YellowCart.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace YellowCart.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _context;
+
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
         {
+            _context = context;
             _logger = logger;
         }
+        
 
         public IActionResult Index()
         {
-            return View();
+            var ProductCat = new ProductCat();
+            ProductCat.Products=_context.Products.ToList();
+            ProductCat.Categories=_context.Category.ToList();
+
+            return View(ProductCat);
         }
 
         public IActionResult Privacy()
@@ -28,5 +41,54 @@ namespace YellowCart.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+        public IActionResult Shop(string? query)
+        {
+
+            if (query != null)
+            {
+                IEnumerable<Product> searchedProductList = _context.Products.Where(p => p.Category.SubCategoryName == query).ToList();
+                if (searchedProductList.Count() == 0)
+                {
+                    searchedProductList = _context.Products.Where(p => p.ProductName.Contains(query)).ToList();
+                    if (searchedProductList.Count() == 0)
+                    {
+                        ViewBag.Msg = "No Items found in the database.";
+                        return View(searchedProductList);
+                    }
+                    else
+                    {
+                        ViewBag.Msg = String.Format("Searched by Product Name. {0} item(s) found.", searchedProductList.Count());
+
+
+
+                        return View(searchedProductList);
+                    }
+
+                }
+                else
+                {
+                    ViewBag.Msg = String.Format("Searched by Product Brand. {0} item(s) found.", searchedProductList.Count());
+
+                    return View(searchedProductList);
+                }
+            }
+
+            IEnumerable<Product> objProductList = _context.Products.ToList();
+            return View(objProductList);
+
+
+           
+        }
+   
+        public IActionResult Cart()
+        {
+            return View();
+        }
+        
     }
+    
 }
