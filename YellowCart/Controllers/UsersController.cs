@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using YellowCart.Data;
 using YellowCart.Models;
+using YellowCart.ViewModels;
 
 namespace YellowCart.Controllers
 {
@@ -52,21 +53,22 @@ namespace YellowCart.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+   
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Users users)
+        public async Task<IActionResult> Create(Users users)
         {
             if (ModelState.IsValid)
             {
-                if(_context.Users.Any(m=>m.Email==users.Email))
+                if(_context.Users.SingleOrDefault(m=>m.Email==users.Email)==null)
                 {
-                   
+                    _context.Add(users);
+                    await _context.SaveChangesAsync();
+                    TempData["sucess"] = "User Created sucess";
+                    return RedirectToAction(nameof(Index));
                 }
-                _context.Add(users);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["error"] = "Email already exist";
+                return View();
             }
             return View(users);
         }
@@ -162,6 +164,29 @@ namespace YellowCart.Controllers
         private bool UsersExists(int id)
         {
           return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public async Task<IActionResult> Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        
+        public async Task<IActionResult> Login(LoginViewModel login)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users
+                .SingleOrDefaultAsync(m => m.Email == login.Email && m.Password == login.Password);
+                if (user != null)
+                {
+                    HttpContext.Session.SetInt32("Id", user.Id);
+                    ViewData["user"] = user;
+                    return RedirectToAction("Index", "Home");
+                }
+                ModelState.AddModelError("Password", "Invalid login attempt.");
+            }
+            return View("Login");
+           
         }
     }
 }

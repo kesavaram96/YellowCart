@@ -23,8 +23,10 @@ namespace YellowCart.Controllers
         // GET: Carts
         public async Task<IActionResult> Index()
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
             //request user
-            var applicationDbContext = _context.Cart.Include(c => c.Product).Include(c => c.User);
+            var applicationDbContext = _context.Cart.Include(c => c.Product).Include(c => c.User).Where(u=>u.User==user);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -63,11 +65,13 @@ namespace YellowCart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int Id,int qty)
         {
-            int userId = 3;
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+
             //int user = _context.Users.Find();
             Product product = _context.Products.Find(Id);
 
-            if(product==null || userId==0)
+            if (product == null || user == null)
             {
                 return NotFound();
             }
@@ -80,7 +84,7 @@ namespace YellowCart.Controllers
                 {
                     Quantitive = qty,
                     Product = product,
-                    UserId = userId,
+                    User = user,
                     Total = qty * product.Price
 
                 };

@@ -1,0 +1,27 @@
+﻿@model YellowCart.ViewModels.LoginViewModel
+
+<div class="col-sm-12 col-md-12 col-xs-12 col-lg-6 mb-30">
+    <!-- Login Form s-->
+    <form asp-action="Login" asp-controller="Users">
+        <div class="login-form">
+            <h4 class="login-title">Login</h4>
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="col-md-12 mb-20">
+                    <label asp-for="Email" class=""></label>
+                    <input asp-for="Email" class="mb-0" placeholder="Email Address" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 mb-20">
+                    <label asp-for="Password" class=""></label>
+                    <input asp-for="Password" class="mb-0" placeholder="Password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="register-button mt-0">Login</button>
+                </div>
+                
+            </div>
+        </div>
+    </form>
+</div>
