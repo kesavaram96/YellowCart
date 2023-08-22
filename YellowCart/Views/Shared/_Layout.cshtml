@@ -1,6 +1,11 @@
 ﻿
 
-
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+   
+    var x=HttpContextAccessor.HttpContext.Session.GetInt32("Id");
+    }
 <!doctype html>
 <html class="no-js" lang="zxx">
 
@@ -91,9 +96,21 @@
                                         <div class="ht-setting-trigger"><span>Setting</span></div>
                                         <div class="setting ht-setting">
                                             <ul class="ht-setting-list">
-                                                <li><a >My Account</a></li>
-                                                <li><a asp-action="Login" asp-controller="users">Log In</a></li>
-                                                <li><a asp-action="create" asp-controller="users">Sign In</a></li>
+                                                
+                                               
+                                                @{
+                                                    if(x!=null)
+                                                    {
+                                                        <li><a asp-action="Logout" asp-controller="users">Log out</a></li>
+                                                        <li><a>My Account</a></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li><a asp-action="Login" asp-controller="users">Log In</a></li>
+                                                    }
+                                                    
+                                                }
+                                                
                                             </ul>
                                         </div>
                                     </li>

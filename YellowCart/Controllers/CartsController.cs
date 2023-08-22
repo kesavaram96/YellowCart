@@ -23,9 +23,16 @@ namespace YellowCart.Controllers
         // GET: Carts
         public async Task<IActionResult> Index()
         {
+
             var UID = HttpContext.Session.GetInt32("Id");
             Users user = _context.Users.Find(UID);
             //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See Cart";
+                return RedirectToAction("Login", "Users");
+            }
             var applicationDbContext = _context.Cart.Include(c => c.Product).Include(c => c.User).Where(u=>u.User==user);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -83,60 +90,31 @@ namespace YellowCart.Controllers
                 return RedirectToAction("Index", "Carts");
             
         }
-        // GET: Carts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Cart == null)
-            {
-                return NotFound();
-            }
-
-            var cart = await _context.Cart.FindAsync(id);
-            if (cart == null)
-            {
-                return NotFound();
-            }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", cart.ProductId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", cart.UserId);
-            return View(cart);
-        }
-
-        // POST: Carts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+     
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,ProductId,Quantitive,Total")] Cart cart)
+        public async Task<IActionResult> Edit(int id, int qty)
         {
-            if (id != cart.Id)
+            var cart = _context.Cart.Find(id);
+            var product=_context.Products.FirstOrDefault(m=>m.Id.Equals(cart.ProductId)); 
+            
+            if (cart==null)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if(qty == 0) 
             {
-                try
-                {
-                    _context.Update(cart);
-                    await _context.SaveChangesAsync();
-                    TempData["sucess"] = "Cart Updated";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CartExists(cart.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Cart.Remove(cart);
+                _context.SaveChanges();
+                TempData["sucess"] = "Cart Updated";
+                return RedirectToAction("Index");
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", cart.ProductId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", cart.UserId);
-            return View(cart);
+            cart.Quantitive = qty;
+            cart.Total = qty* product.Price;
+            _context.Update(cart);
+            await _context.SaveChangesAsync();
+            TempData["sucess"] = "Cart Updated";
+
+            return RedirectToAction("Index");
         }
 
         // GET: Carts/Delete/5

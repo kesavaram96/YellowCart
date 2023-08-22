@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,19 +19,43 @@ namespace YellowCart.Controllers
         {
             _context = context;
         }
-
+   
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Category.ToListAsync());
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType=="user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(await _context.Category.ToListAsync());
         }
 
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null || _context.Category == null)
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
             {
-                return NotFound();
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
             }
 
             var category = await _context.Category
@@ -46,6 +71,20 @@ namespace YellowCart.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -56,6 +95,20 @@ namespace YellowCart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,SubCategoryName")] Category category)
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(category);
@@ -69,6 +122,20 @@ namespace YellowCart.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             if (id == null || _context.Category == null)
             {
                 return NotFound();
@@ -89,6 +156,20 @@ namespace YellowCart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,SubCategoryName")] Category category)
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             if (id != category.Id)
             {
                 return NotFound();
@@ -121,6 +202,20 @@ namespace YellowCart.Controllers
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             if (id == null || _context.Category == null)
             {
                 return NotFound();
@@ -141,6 +236,20 @@ namespace YellowCart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             if (_context.Category == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Category'  is null.");

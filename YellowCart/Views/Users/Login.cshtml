@@ -17,8 +17,14 @@
                     <input asp-for="Password" class="mb-0" placeholder="Password" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="register-button mt-0">Login</button>
+                <div class="col-6">
+                    <button type="submit" class="register-button mt-0">Log in</button>
+                    
+                </div>
+
+                <div class="col-6">
+                    <a asp-action="Create" class="mt-0" style="font-size:17px">New customer? Start here.</a>
+
                 </div>
                 
             </div>

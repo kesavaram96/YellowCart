@@ -181,6 +181,7 @@ namespace YellowCart.Controllers
                 {
                     HttpContext.Session.SetInt32("Id", user.Id);
                     ViewData["user"] = user;
+                    TempData["sucess"] = "Log in sucess, Welcome Back "+user.FirstName;
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("Password", "Invalid login attempt.");
