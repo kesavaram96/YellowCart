@@ -23,6 +23,20 @@ namespace YellowCart.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType == "user")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             return _context.Users != null ?
                         View(await _context.Users.ToListAsync()) :
                         Problem("Entity set 'ApplicationDbContext.Users'  is null.");
