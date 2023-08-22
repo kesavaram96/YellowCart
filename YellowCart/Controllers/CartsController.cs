@@ -32,42 +32,26 @@ namespace YellowCart.Controllers
 
        
 
-        // GET: Carts/Create
-        public IActionResult Create()
-        {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword");
-            return View();
-        }
-
-        // POST: Carts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,UserId,ProductId,Quantitive,Total")] Cart cart)
+        //// GET: Carts/Create
+        //public IActionResult Create()
         //{
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        cart.Total = Convert.ToInt32(cart.Product.Price) * Convert.ToInt32(cart.Quantitive);
-        //        cart.User.Id = 3;
-        //        _context.Add(cart);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", cart.ProductId);
-        //    //ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", cart.UserId);
-        //    return View(cart);
+        //    ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword");
+        //    return View();
         //}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int Id,int qty)
         {
             var UID = HttpContext.Session.GetInt32("Id");
             Users user = _context.Users.Find(UID);
-
+         
+            if(!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to Add Cart";
+                return RedirectToAction("Login", "Users");
+            }
+               
             //int user = _context.Users.Find();
             Product product = _context.Products.Find(Id);
 

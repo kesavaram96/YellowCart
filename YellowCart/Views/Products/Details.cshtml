@@ -1,7 +1,9 @@
 ﻿@model YellowCart.Models.Product
-
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Details";
+    var x=HttpContextAccessor.HttpContext.Session.GetInt32("Id");
 }
 
 

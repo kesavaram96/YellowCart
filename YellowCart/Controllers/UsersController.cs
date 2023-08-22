@@ -23,9 +23,9 @@ namespace YellowCart.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-              return _context.Users != null ? 
-                          View(await _context.Users.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Users'  is null.");
+            return _context.Users != null ?
+                        View(await _context.Users.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Users'  is null.");
         }
 
         // GET: Users/Details/5
@@ -53,14 +53,14 @@ namespace YellowCart.Controllers
         }
 
         // POST: Users/Create
-   
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Users users)
         {
             if (ModelState.IsValid)
             {
-                if(_context.Users.SingleOrDefault(m=>m.Email==users.Email)==null)
+                if (_context.Users.SingleOrDefault(m => m.Email == users.Email) == null)
                 {
                     _context.Add(users);
                     await _context.SaveChangesAsync();
@@ -156,21 +156,21 @@ namespace YellowCart.Controllers
             {
                 _context.Users.Remove(users);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UsersExists(int id)
         {
-          return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
         public async Task<IActionResult> Login()
         {
             return View();
         }
         [HttpPost]
-        
+
         public async Task<IActionResult> Login(LoginViewModel login)
         {
             if (ModelState.IsValid)
@@ -186,7 +186,14 @@ namespace YellowCart.Controllers
                 ModelState.AddModelError("Password", "Invalid login attempt.");
             }
             return View("Login");
-           
+
+        }
+        public async Task<IActionResult> Logout()
+        {
+
+            HttpContext.Session.Remove("Id");
+            TempData["sucess"] = "Log out sucess";
+            return RedirectToAction("Index", "Home");
         }
     }
 }
