@@ -27,7 +27,7 @@ namespace YellowCart.Controllers
             var ProductCat = new ProductCat();
             ProductCat.Products=_context.Products.ToList();
             ProductCat.Categories=_context.Category.ToList();
-
+            TempData["cart"] = _context.Cart.Count();
             return View(ProductCat);
         }
 
@@ -56,7 +56,7 @@ namespace YellowCart.Controllers
                     searchedProductList = _context.Products.Where(p => p.ProductName.Contains(query)).ToList();
                     if (searchedProductList.Count() == 0)
                     {
-                        ViewBag.Msg = "No Items found in the database.";
+                        TempData["error"] = "No Items found in the database.";
                         return View(searchedProductList);
                     }
                     else
@@ -71,7 +71,7 @@ namespace YellowCart.Controllers
                 }
                 else
                 {
-                    ViewBag.Msg = String.Format("Searched by Product Brand. {0} item(s) found.", searchedProductList.Count());
+                    TempData["error"] = String.Format("Searched by Product Brand. {0} item(s) found.", searchedProductList.Count());
 
                     return View(searchedProductList);
                 }

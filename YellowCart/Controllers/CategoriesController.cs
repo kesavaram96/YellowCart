@@ -60,6 +60,7 @@ namespace YellowCart.Controllers
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                TempData["sucess"] = "Added to Category";
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -98,6 +99,7 @@ namespace YellowCart.Controllers
                 try
                 {
                     _context.Update(category);
+                    TempData["sucess"] = "Updated sucessfully";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -150,6 +152,7 @@ namespace YellowCart.Controllers
             }
             
             await _context.SaveChangesAsync();
+            TempData["sucess"] = "Removed sucess";
             return RedirectToAction(nameof(Index));
         }
 

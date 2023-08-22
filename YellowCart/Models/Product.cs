@@ -14,6 +14,7 @@ namespace YellowCart.Models
         [Required]
 
         public int Price { get; set; }
+    
         public long CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }

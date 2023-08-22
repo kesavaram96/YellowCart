@@ -14,5 +14,7 @@ namespace YellowCart.Models
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
         public int Quantitive { get; set; }
+        public int Total { get;set; }
+
     }
 }

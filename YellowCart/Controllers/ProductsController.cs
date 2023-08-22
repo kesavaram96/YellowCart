@@ -10,13 +10,15 @@ using YellowCart.Models;
 
 namespace YellowCart.Controllers
 {
+    
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public ProductsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Products
@@ -57,13 +59,31 @@ namespace YellowCart.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductName,Description,Price,CategoryId,Image,Quantity")] Product product)
+        public async Task<IActionResult> Create(int cat_id, Product product,IFormFile? file)
         {
+
             if (ModelState.IsValid)
             {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    product.Image = @"/images/product/" + fileName;
+                }
+            
+                product.CategoryId = cat_id;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+                TempData["sucess"] = "Product Added Sucessfully";
                 return RedirectToAction(nameof(Index));
+
+          
             }
             ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", product.CategoryId);
             return View(product);
@@ -103,6 +123,7 @@ namespace YellowCart.Controllers
                 try
                 {
                     _context.Update(product);
+                    TempData["sucess"] = "Product Update sucessfully";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -157,6 +178,7 @@ namespace YellowCart.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["sucess"] = "Product Delete sucessfully";
             return RedirectToAction(nameof(Index));
         }
 

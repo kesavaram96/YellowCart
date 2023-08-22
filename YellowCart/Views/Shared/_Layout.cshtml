@@ -14,6 +14,8 @@
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png">
   
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <!-- Material Design Iconic Font-V2.2.0 -->
     <link rel="stylesheet" href="/css/material-design-iconic-font.min.css">
     <!-- Font Awesome -->
@@ -46,6 +48,7 @@
     <link rel="stylesheet" href="/css/responsive.css">
     <!-- Modernizr js -->
     <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+    
 </head>
 
 <body>
@@ -156,13 +159,14 @@
                                         <div class="hm-minicart-trigger">
                                             <span class="item-icon"></span>
                                             <span class="item-text">
-                                                LKR 80.00
-                                                <span class="cart-item-count">2</span>
+                                                CART
+                                               
+                                                <span class="cart-item-count">@TempData["cart"]</span>
                                             </span>
                                         </div>
                                         <span></span>
                                         <div class="minicart">
-                                            <ul class="minicart-product-list">
+                                     @*       <ul class="minicart-product-list">
                                                 <li>
                                                     <a href="single-product.html" class="minicart-product-image">
                                                         <img src="/images/product/small-size/5.jpg" alt="cart products">
@@ -187,13 +191,13 @@
                                                         <i class="fa fa-close"></i>
                                                     </button>
                                                 </li>
-                                            </ul>
-                                            <p class="minicart-total">SUBTOTAL: <span>LKR 80.00</span></p>
+                                            </ul>*@
+                                            @*<p class="minicart-total">SUBTOTAL: <span>LKR 80.00</span></p>*@
                                             <div class="minicart-button">
-                                                <a asp-action="cart" asp-controller="home" class="li-button li-button-fullwidth li-button-dark">
+                                                <a asp-action="index" asp-controller="carts" class="li-button li-button-fullwidth li-button-dark">
                                                     <span>View Full Cart</span>
                                                 </a>
-                                                <a href="" class="li-button li-button-fullwidth">
+                                                <a asp-action="index" asp-controller="carts" class="li-button li-button-fullwidth">
                                                     <span>Checkout</span>
                                                 </a>
                                             </div>
@@ -250,6 +254,7 @@
         </div>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification"/>
             @RenderBody()
         </main>
     </div>
