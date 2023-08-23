@@ -23,7 +23,23 @@ namespace YellowCart.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Orders.Include(o => o.Product).Include(o => o.User);
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See Cart";
+                return RedirectToAction("Login", "Users");
+            }
+            if(user.UserType=="admin")
+            {
+                ViewBag.Title = "Orders";
+                var orders = _context.Orders.Include(o => o.Product).Include(o => o.User);
+                return View(await orders.ToListAsync());
+            }
+            ViewBag.Title = "My Orders";
+            var applicationDbContext = _context.Orders.Include(o => o.Product).Include(o => o.User).Where(u => u.User == user);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -48,29 +64,71 @@ namespace YellowCart.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
-        {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword");
-            return View();
-        }
+        //public IActionResult Create()
+        //{
+        //    ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword");
+        //    return View();
+        //}
 
         // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,ProductId,OrderDate,TotalAmount,Quantitive")] Orders orders)
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        [HttpGet]
+        public async Task<IActionResult> Create(int Id)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            //    _context.Add(orders);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", orders.ProductId);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", orders.UserId);
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+
+            if (!UID.HasValue)
             {
-                _context.Add(orders);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["error"] = "Please Login to See Orders";
+                return RedirectToAction("Login", "Users");
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", orders.ProductId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", orders.UserId);
-            return View(orders);
+
+            //int user = _context.Users.Find();
+            Cart cart = _context.Cart.Find(Id);
+
+            if (cart == null || user == null)
+            {
+                return NotFound();
+            }
+
+            //var cartProduct = _context.Products.SingleAsync(m=>m.ProductName==cart.Product.ProductName);
+            if (cart != null)
+            {
+
+                Orders order = new Orders
+                {
+                    User = user,
+                    ProductId = cart.ProductId,
+                    OrderDate = DateTime.Now,
+                    Quantitive=cart.Quantitive,
+                    TotalAmount=cart.Total
+                    
+
+                };
+                _context.Orders.Add(order);
+                _context.Cart.Remove(cart);
+                _context.SaveChanges();
+                TempData["sucess"] = "Checkout sucess";
+
+                return RedirectToAction("Index", "Orders");
+            }
+
+            
+           
+            return RedirectToAction("Index","Home");
         }
 
         // GET: Orders/Edit/5

@@ -84,8 +84,22 @@ namespace YellowCart.Controllers
            
         }
    
-        public IActionResult Cart()
+        public IActionResult Admin()
         {
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            //request user
+
+            if (!UID.HasValue)
+            {
+                TempData["error"] = "Please Login to See this Page";
+                return RedirectToAction("Login", "Users");
+            }
+            if (UID.HasValue && user.UserType != "admin")
+            {
+                TempData["error"] = "Only Admin can see this page";
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
         

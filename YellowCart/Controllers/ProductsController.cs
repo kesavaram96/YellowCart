@@ -33,7 +33,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -73,18 +73,17 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id");
+            //ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Category,"Id","SubCategoryName");
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int cat_id, Product product,IFormFile? file)
@@ -98,7 +97,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -127,7 +126,7 @@ namespace YellowCart.Controllers
 
           
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "SubCategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -143,7 +142,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -225,7 +224,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -260,7 +259,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");

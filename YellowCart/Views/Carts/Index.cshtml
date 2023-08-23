@@ -57,12 +57,13 @@
                                             <div class="coupon2">
                                                
                                                 <input class="button" name="update_cart" value="Update cart" type="submit">
-                                                
+                                           
+                                                <a asp-action="Create" asp-controller="Orders" asp-route-Id="@item.Id"> Checkout</a>
                                                
                                             </div>
                                         </td>
                                     </tr>
-                                </form>
+                                 </form>
                                 }
                                 
                                
@@ -96,7 +97,7 @@
                                     <li>Total <span>LKR @x.00</span></li>
                                     }
                                 </ul>
-                                <a href="#">Proceed to checkout</a>
+                                @*<a href="#">Proceed to checkout</a>*@
                             </div>
                         </div>
                     </div>

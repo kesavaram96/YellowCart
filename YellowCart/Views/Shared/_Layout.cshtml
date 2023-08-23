@@ -252,9 +252,16 @@
                                        
                                         
                                         <li><a asp-controller="home" asp-action="aboutus">About Us</a></li>
-                                        <li><a href="">Contact</a></li>
-                                        <li><a asp-controller="home" asp-action="shop">Products</a></li>
                                         
+                                        <li><a asp-controller="home" asp-action="shop">Products</a></li>
+                                       @{ if(x!=null)
+                                        {
+                                        <li><a asp-controller="Orders" asp-action="Index">My Orders</a></li>
+                                        }
+                                        if(x!=null && x==1)
+                                        {
+                                        <li><a asp-controller="Home" asp-action="Admin">Admin</a></li>
+                                        }}
                                     </ul>
                                 </nav>
                             </div>

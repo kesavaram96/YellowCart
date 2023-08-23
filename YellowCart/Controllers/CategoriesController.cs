@@ -32,7 +32,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType=="user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -52,7 +52,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -80,7 +80,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -104,7 +104,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -131,7 +131,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -165,7 +165,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
@@ -211,7 +211,7 @@ namespace YellowCart.Controllers
                 TempData["error"] = "Please Login to See this Page";
                 return RedirectToAction("Login", "Users");
             }
-            if (UID.HasValue && user.UserType == "user")
+            if (UID.HasValue && user.UserType != "admin")
             {
                 TempData["error"] = "Only Admin can see this page";
                 return RedirectToAction("Index", "Home");
