@@ -62,7 +62,7 @@ namespace YellowCart.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             return View(category);
@@ -138,13 +138,13 @@ namespace YellowCart.Controllers
             }
             if (id == null || _context.Category == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var category = await _context.Category.FindAsync(id);
             if (category == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
             return View(category);
         }
@@ -172,7 +172,7 @@ namespace YellowCart.Controllers
             }
             if (id != category.Id)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             if (ModelState.IsValid)
@@ -187,7 +187,7 @@ namespace YellowCart.Controllers
                 {
                     if (!CategoryExists(category.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction("Pagenotfound", "Home");
                     }
                     else
                     {
@@ -218,14 +218,14 @@ namespace YellowCart.Controllers
             }
             if (id == null || _context.Category == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var category = await _context.Category
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             return View(category);

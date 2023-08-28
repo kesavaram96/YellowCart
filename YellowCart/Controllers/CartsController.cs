@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace YellowCart.Controllers
         {
             _context = context;
         }
-
+       
         // GET: Carts
         public async Task<IActionResult> Index()
         {
@@ -30,8 +31,10 @@ namespace YellowCart.Controllers
 
             if (!UID.HasValue)
             {
+                //temporaty code
                 TempData["error"] = "Please Login to See Cart";
-                return RedirectToAction("Login", "Users");
+                Response.Redirect("Users/Login?returnUrl=" + HttpUtility.UrlEncode("~/Carts/Index"));
+                //return RedirectToAction("Login", "Users");
             }
             var applicationDbContext = _context.Cart.Include(c => c.Product).Include(c => c.User).Where(u=>u.User==user);
             return View(await applicationDbContext.ToListAsync());
@@ -64,10 +67,21 @@ namespace YellowCart.Controllers
 
             if (product == null || user == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
-            
+       
             var cartProduct = _context.Cart.FirstOrDefault(p => p.Product == product);
+            var products = _context.Products.Find(Id);
+            if (qty < 1)
+            {
+                TempData["error"] = "Quantity must be greater than 0";
+                return RedirectToAction("Index", "Carts");
+            }
+            else if (product.Quantity<qty) 
+            {
+                TempData["error"] = "Item quantity must be less than "+product.Quantity;
+                return RedirectToAction("Index", "Carts");
+            }
             if (cartProduct== null)
             {
 
@@ -82,7 +96,8 @@ namespace YellowCart.Controllers
                 _context.Cart.Add(cart);
                 _context.SaveChanges();
                 TempData["sucess"] = "Added to Cart";
-
+                var cartCount = _context.Cart.Where(m => m.User == user).Count();
+                HttpContext.Session.SetInt32("cart", cartCount);
                 return RedirectToAction("Index", "Carts");
             }
             
@@ -120,21 +135,7 @@ namespace YellowCart.Controllers
         // GET: Carts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            //if (id == null || _context.Cart == null)
-            //{
-            //    return NotFound();
-            //}
 
-            //var cart = await _context.Cart
-            //    .Include(c => c.Product)
-            //    .Include(c => c.User)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (cart == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(cart);
             if (_context.Cart == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Cart'  is null.");
@@ -150,24 +151,7 @@ namespace YellowCart.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Carts/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.Cart == null)
-        //    {
-        //        return Problem("Entity set 'ApplicationDbContext.Cart'  is null.");
-        //    }
-        //    var cart = await _context.Cart.FindAsync(id);
-        //    if (cart != null)
-        //    {
-        //        _context.Cart.Remove(cart);
-        //    }
-            
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+       
 
         private bool CartExists(int id)
         {

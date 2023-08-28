@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -78,8 +79,9 @@ namespace YellowCart.Controllers
                 {
                     _context.Add(users);
                     await _context.SaveChangesAsync();
-                    TempData["sucess"] = "User Created sucess";
-                    return RedirectToAction(nameof(Index));
+                    TempData["sucess"] = "User Created sucess, Please Login";
+                    
+                    return RedirectToAction("Index","Home");
                 }
                 TempData["error"] = "Email already exist";
                 return View();
@@ -103,9 +105,6 @@ namespace YellowCart.Controllers
             return View(users);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserName,Password,Email,PhoneNumber,UserType")] Users users)
@@ -179,26 +178,47 @@ namespace YellowCart.Controllers
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(string? returnUrl)
         {
+            this.ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
         [HttpPost]
 
-        public async Task<IActionResult> Login(LoginViewModel login)
+        public async Task<IActionResult> Login(LoginViewModel login,string? returnUrl)
         {
             if (ModelState.IsValid)
             {
+                
                 var user = await _context.Users
-                .SingleOrDefaultAsync(m => m.Email == login.Email && m.Password == login.Password);
-                if (user != null)
+                .SingleOrDefaultAsync(m => m.Email == login.Email);
+                if (user == null) 
+                {
+                    ModelState.AddModelError("Email","Email id is Not found");
+                    return View("Login");
+                }
+                if (user.Password==login.Password)
                 {
                     HttpContext.Session.SetInt32("Id", user.Id);
                     ViewData["user"] = user;
                     TempData["sucess"] = "Log in sucess, Welcome Back "+user.FirstName;
-                    return RedirectToAction("Index", "Home");
+
+                    var cartCount = _context.Cart.Where(m => m.User == user).Count();
+                    HttpContext.Session.SetInt32("cart", cartCount);
+
+                    
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+       
+                        return Redirect(HttpUtility.UrlDecode(returnUrl));
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+
                 }
-                ModelState.AddModelError("Password", "Invalid login attempt.");
+                ModelState.AddModelError("Password", "Invalid Password");
             }
             return View("Login");
 
@@ -207,6 +227,7 @@ namespace YellowCart.Controllers
         {
 
             HttpContext.Session.Remove("Id");
+            HttpContext.Session.Remove("cart");
             TempData["sucess"] = "Log out sucess";
             return RedirectToAction("Index", "Home");
         }

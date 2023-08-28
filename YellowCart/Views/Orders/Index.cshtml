@@ -1,16 +1,16 @@
 ﻿@model IEnumerable<YellowCart.Models.Orders>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+
+    var x = HttpContextAccessor.HttpContext.Session.GetInt32("Id");
+}
+
+
 <style>
     body {
-        color: #566787;
-        background: #f5f5f5;
-        font-family: 'Roboto', sans-serif;
+       
+        
     }
 
     .table-responsive {
@@ -35,31 +35,7 @@
             font-size: 22px;
         }
 
-    .search-box {
-        position: relative;
-        float: right;
-    }
-
-        .search-box input {
-            height: 34px;
-            border-radius: 20px;
-            padding-left: 35px;
-            border-color: #ddd;
-            box-shadow: none;
-        }
-
-            .search-box input:focus {
-                border-color: #3FBAE4;
-            }
-
-        .search-box i {
-            color: #a0a5b1;
-            position: absolute;
-            font-size: 19px;
-            top: 8px;
-            left: 10px;
-        }
-
+ 
     table.table tr th, table.table tr td {
         border-color: #e9e9e9;
     }
@@ -165,6 +141,12 @@
                 <thead>
                     <tr>
                         <th> @Html.DisplayNameFor(model => model.Id)</th>
+                        @{
+                            if(x==1)
+                            {
+                                <th> @Html.DisplayNameFor(model => model.User.Email)</th>
+                            }
+                        }
                         
                         <th>
                             @Html.DisplayNameFor(model => model.Product)
@@ -189,6 +171,12 @@
                             <td>
                                     @Html.DisplayFor(modelItem => item.Id)
                             </td>
+                            @{
+                                if (x == 1)
+                                {
+                                    <th> @Html.DisplayFor(modelItem => item.User.Email)</th>
+                                }
+                            }
                             <td>
                                     @Html.DisplayFor(modelItem => item.Product.ProductName)
                             </td>

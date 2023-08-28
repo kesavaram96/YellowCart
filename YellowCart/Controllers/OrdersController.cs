@@ -79,14 +79,7 @@ namespace YellowCart.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int Id)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(orders);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName", orders.ProductId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword", orders.UserId);
+            
             var UID = HttpContext.Session.GetInt32("Id");
             Users user = _context.Users.Find(UID);
 
@@ -121,7 +114,7 @@ namespace YellowCart.Controllers
                 _context.Orders.Add(order);
                 _context.Cart.Remove(cart);
                 _context.SaveChanges();
-                TempData["sucess"] = "Checkout sucess";
+                TempData["sucess"] = "Your order is placed!!! Enjoy your shopping";
 
                 return RedirectToAction("Index", "Orders");
             }

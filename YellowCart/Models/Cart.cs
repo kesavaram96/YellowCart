@@ -13,7 +13,9 @@ namespace YellowCart.Models
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int Quantitive { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int Total { get;set; }
 
     }

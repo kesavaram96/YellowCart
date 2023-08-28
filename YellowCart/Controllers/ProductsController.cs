@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace YellowCart.Controllers
         {
             if (id == null || _context.Products == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var product = await _context.Products
@@ -55,7 +56,7 @@ namespace YellowCart.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             return View(product);
@@ -149,24 +150,21 @@ namespace YellowCart.Controllers
             }
             if (id == null || _context.Products == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "SubCategoryName", product.CategoryId);
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Description,Price,CategoryId,Image,Quantity")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Description,Price,CategoryId,Image,Quantity")] Product product, IFormFile? file)
         {
             var UID = HttpContext.Session.GetInt32("Id");
             Users user = _context.Users.Find(UID);
@@ -184,11 +182,30 @@ namespace YellowCart.Controllers
             }
             if (id != product.Id)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             if (ModelState.IsValid)
             {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    if (System.IO.File.Exists(product.Image))
+                    {
+                        System.IO.File.Delete(product.Image);
+                    }
+                    //string filePath = Path.Combine(wwwRootPath,product.Image);
+                    //System.IO.File.Delete(filePath);
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    product.Image = @"/images/product/" + fileName;
+                }
+              
                 try
                 {
                     _context.Update(product);
@@ -199,7 +216,7 @@ namespace YellowCart.Controllers
                 {
                     if (!ProductExists(product.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction("Pagenotfound", "Home");
                     }
                     else
                     {
@@ -231,7 +248,7 @@ namespace YellowCart.Controllers
             }
             if (id == null || _context.Products == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var product = await _context.Products
@@ -239,7 +256,7 @@ namespace YellowCart.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             return View(product);
