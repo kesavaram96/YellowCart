@@ -102,7 +102,7 @@
                                                     if(x!=null)
                                                     {
                                                         <li><a asp-action="Logout" asp-controller="users">Log out</a></li>
-                                                        <li><a>My Account</a></li>
+                                                        <li><a asp-action="Edit" asp-controller="users" asp-route-Id="@x">My Account</a></li>
                                                     }
                                                     else
                                                     {

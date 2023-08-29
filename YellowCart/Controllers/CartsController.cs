@@ -51,6 +51,7 @@ namespace YellowCart.Controllers
         //}
         [HttpPost]
         [ValidateAntiForgeryToken]
+       
         public async Task<IActionResult> Create(int Id,int qty)
         {
             var UID = HttpContext.Session.GetInt32("Id");
@@ -107,6 +108,7 @@ namespace YellowCart.Controllers
         }
      
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int qty)
         {
             var cart = _context.Cart.Find(id);
@@ -122,6 +124,16 @@ namespace YellowCart.Controllers
                 _context.SaveChanges();
                 TempData["sucess"] = "Cart Updated";
                 return RedirectToAction("Index");
+            }
+            else if (qty < 1)
+            {
+                TempData["error"] = "Quantity must be greater than 1";
+                return RedirectToAction("Index", "Carts");
+            }
+            else if (product.Quantity < qty)
+            {
+                TempData["error"] = "Item quantity must be less than " + product.Quantity;
+                return RedirectToAction("Index", "Carts");
             }
             cart.Quantitive = qty;
             cart.Total = qty* product.Price;

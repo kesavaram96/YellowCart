@@ -92,26 +92,29 @@ namespace YellowCart.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Users == null)
+            var UID = HttpContext.Session.GetInt32("Id");
+            Users user = _context.Users.Find(UID);
+            
+            if (id == null || _context.Users == null || id!=UID)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var users = await _context.Users.FindAsync(id);
             if (users == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
             return View(users);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserName,Password,Email,PhoneNumber,UserType")] Users users)
+        public async Task<IActionResult> Edit(int id, Users users)
         {
             if (id != users.Id)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             if (ModelState.IsValid)
@@ -120,19 +123,21 @@ namespace YellowCart.Controllers
                 {
                     _context.Update(users);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UsersExists(users.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction("Pagenotfound", "Home");
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["sucess"] = "Profile updated sucess!";
+                return RedirectToAction("Index","Home");
             }
             return View(users);
         }

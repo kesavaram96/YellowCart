@@ -48,7 +48,7 @@ namespace YellowCart.Controllers
         {
             if (id == null || _context.Orders == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             var orders = await _context.Orders
@@ -57,25 +57,12 @@ namespace YellowCart.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (orders == null)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             return View(orders);
         }
 
-        // GET: Orders/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["ProductId"] = new SelectList(_context.Products, "Id", "ProductName");
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "ConfirmPassword");
-        //    return View();
-        //}
-
-        // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
         [HttpGet]
         public async Task<IActionResult> Create(int Id)
         {
@@ -151,7 +138,7 @@ namespace YellowCart.Controllers
         {
             if (id != orders.Id)
             {
-                return NotFound();
+                return RedirectToAction("Pagenotfound", "Home");
             }
 
             if (ModelState.IsValid)
